@@ -11,3 +11,4 @@ App features:
 - [ ] To Do list
 - [ ] Calendar
 - [ ] Reminders
+- [ ] Spam filter
