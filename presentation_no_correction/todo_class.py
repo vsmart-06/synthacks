@@ -39,10 +39,8 @@ class todo:
             entry.bind("<FocusOut>", lambda event, m = i: self.insert_text_temp(event, m))
             button_tick.grid(row=i, column=2)
             button_cross.grid(row=i, column=3)
-            button_cross.grid(row=i, column=3)
             if i == len(self.rows) - 1:
                 button_cross.grid_remove()
-            if i == len(self.rows) - 1:
                 checkbox.grid_remove()
             else:
                 self.onCheck(t[i][2], i)
@@ -125,27 +123,28 @@ class todo:
             button_tick = tk.Button(self.window, text = "✔", command = lambda m = x: self.onTick(m))
             button_cross = tk.Button(self.window, text = "❌", command = lambda m = x: self.onCross(m))
             self.rows.append([checkbox, entry, button_tick, button_cross])
-            self.tasks.append("Enter a task")
-            self.check_states.append(0)
-
+        self.tasks.append("Enter a task")
+        self.check_states.append(0)
         for i in range(len(self.rows)):
             row = self.rows[i]
             checkbox = row[0]
-            if self.check_states[i] == 1:
-                checkbox.select()
             entry = row[1]
             button_tick = row[2]
             button_cross = row[3]
-            button_cross.grid(row=i, column=3)
             checkbox.grid(row=i, column=0)
-            if not(len(self.rows) != 1 and i != len(self.rows) - 1):
-                checkbox.grid_remove()
-                button_cross.grid_remove()
             entry.grid(row=i, column=1)
             entry.insert(0, self.tasks[i])
             entry.bind("<FocusIn>", lambda event, m = i: self.rem_text_temp(event, m))
             entry.bind("<FocusOut>", lambda event, m = i: self.insert_text_temp(event, m))
             button_tick.grid(row=i, column=2)
+            button_cross.grid(row=i, column=3)
+            if i == len(self.rows) - 1:
+                button_cross.grid_remove()
+                checkbox.grid_remove()
+            else:
+                self.onCheck(self.check_states[i], i)
+                if self.check_states[i] == 1:
+                    checkbox.select()
     
     def onCheck(self, t, index):
         row = self.rows[index]
