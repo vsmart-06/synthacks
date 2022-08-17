@@ -1,7 +1,8 @@
 import tkinter as tk
 
 class todo:
-    def __init__(self):
+    def __init__(self, username):
+        self.username = username
         self.window = tk.Tk()
         self.window.title = "To Do List"
         self.num_rows = 1
@@ -159,5 +160,3 @@ class todo:
             self.tasks[index] = contents
             entry.grid(row=loc["row"], column=loc["column"])
             entry.insert(0, contents)
-
-todo = todo()
