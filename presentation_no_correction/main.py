@@ -30,6 +30,10 @@ class database:
         return tasks
 
     def push_tasks(self, username, tasks, done):
+        all_results = self.cursor.execute(f"SELECT * FROM user_tasks WHERE username = '{username}'").fetchall()
+        for task in all_results:
+            if task[1] not in tasks:
+                self.del_task(username, task[1])
         for i in range(len(tasks)):
             task = tasks[i]
             d = done[i]

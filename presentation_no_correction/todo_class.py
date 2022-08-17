@@ -73,7 +73,6 @@ class todo:
         button_cross.grid()
         try:
             self.rows[index+1][1]
-            self.tasks[index] = entry.get()
         except IndexError:
             self.num_rows += 1
             self.on.append(tk.IntVar())
@@ -145,6 +144,7 @@ class todo:
                 self.onCheck(self.check_states[i], i)
                 if self.check_states[i] == 1:
                     checkbox.select()
+        self.db.push_tasks(self.username, self.tasks, self.check_states)
     
     def onCheck(self, t, index):
         row = self.rows[index]
