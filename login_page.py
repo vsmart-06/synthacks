@@ -35,7 +35,7 @@ class database:
             d = done[i]
             result = self.cursor.execute(f"SELECT * FROM user_tasks WHERE username = '{username}' AND task = '{task}'").fetchone()
             if result != None:
-                self.cursor.execute(f"UPDATE user_tasks SET done = {d}")
+                self.cursor.execute(f"UPDATE user_tasks SET done = {d} WHERE username = '{username}' AND task = '{task}'")
             else:
                 self.cursor.execute(f"INSERT INTO user_tasks VALUES ('{username}', '{task}', '{d}')")
         self.db.commit()
