@@ -6,10 +6,16 @@ class database:
         self.db = sqlite3.connect("synthacks/vdv_hacks.db")
         self.cursor = self.db.cursor()
         self.cursor.execute("CREATE TABLE IF NOT EXISTS user_credentials (username TEXT PRIMARY KEY, password TEXT)")
-        self.cursor.execute("CREATE TABLE IF NOT EXISTS user_tasks (id INTEGER PRIMARY KEY, username TEXT, password TEXT, done INTEGER, date TEXT)")
+        self.cursor.execute("CREATE TABLE IF NOT EXISTS user_tasks (id INTEGER PRIMARY KEY, username TEXT, password TEXT, done INTEGER)")
+        self.db.commit()
     
     def new_user(self, username, password):
-        self.cursor.execute(f"INSERT INTO user_credentials VALUES ('{username}', '{password}')")
+        try:
+            self.cursor.execute(f"INSERT INTO user_credentials VALUES ('{username}', '{password}')")
+            self.db.commit()
+            return True
+        except sqlite3.IntegrityError:
+            return False
     
     def is_user(self, username, password):
         result1 = self.cursor.execute(f"SELECT * FROM user_credentials WHERE username = '{username}' AND password = '{password}'").fetchone()
@@ -64,8 +70,10 @@ class login:
         if self.db.is_user(username, password):
             self.result = tk.Label(self.window, text = "There is already an account with this username", fg = "red")
         else:
-            self.db.new_user(username, password)
-            self.result = tk.Label(self.window, text = "Account created", fg = "green")
+            if not self.db.new_user(username, password):
+                self.result = self.result = tk.Label(self.window, text = "Username already exists", fg = "red")
+            else:
+                self.result = tk.Label(self.window, text = "Account created", fg = "green")
         self.result.grid(row = 4, column = 0)
 
 object = login(db)
