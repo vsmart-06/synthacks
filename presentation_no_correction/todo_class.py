@@ -6,7 +6,7 @@ class todo:
         self.username = username
         self.db = db
         self.window = tk.Tk()
-        self.window.title = "To Do List"
+        self.window.title("To Do List")
         self.on = []
         self.rows = []
         self.check_states = []

@@ -56,7 +56,7 @@ class login:
     def __init__(self, db):
         self.db = db
         self.window = tk.Tk()
-        self.window.title = "Login"
+        self.window.title("Login")
         username_label = tk.Label(self.window, text = "Username: ")
         password_label = tk.Label(self.window, text = "Password: ")
         username_label.grid(row=0, column=0)
