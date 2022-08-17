@@ -7,11 +7,11 @@ The repository to store the files for Greenwood High Synthacks 2022
 
 App features: 
 
-- [.] Text summarizer
-- [.] To Do list
+- [x] Text summarizer
+- [x] To Do list
 - [ ] Calendar
 - [ ] Reminders
-- [.] Spam filter
+- [x] Spam filter
 
 ## Result
 
