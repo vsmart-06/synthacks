@@ -6,7 +6,7 @@ class database:
         self.db = sqlite3.connect("synthacks/vdv_hacks.db")
         self.cursor = self.db.cursor()
         self.cursor.execute("CREATE TABLE IF NOT EXISTS user_credentials (username TEXT PRIMARY KEY, password TEXT)")
-        self.cursor.execute("CREATE TABLE IF NOT EXISTS user_tasks (id INTEGER PRIMARY KEY, username TEXT, password TEXT, done INTEGER)")
+        self.cursor.execute("CREATE TABLE IF NOT EXISTS user_tasks (id INTEGER PRIMARY KEY, username TEXT, done INTEGER)")
         self.db.commit()
     
     def new_user(self, username, password):
