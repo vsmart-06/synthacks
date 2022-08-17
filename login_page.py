@@ -1,6 +1,6 @@
 import tkinter as tk
 import sqlite3
-from todo import todo
+from todo_class import todo
 
 class database:
     def __init__(self):
