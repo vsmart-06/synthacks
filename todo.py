@@ -1,15 +1,22 @@
 import tkinter as tk
+import sqlite3
+
 
 class todo:
-    def __init__(self, username):
+    def __init__(self, username, db):
         self.username = username
+        self.db = db
         self.window = tk.Tk()
         self.window.title = "To Do List"
-        self.num_rows = 1
         self.on = []
         self.rows = []
-        self.tasks = []
         self.check_states = []
+        t = self.db.pull_tasks(self.username)
+        self.tasks = []
+        for i in t:
+            self.tasks.append(i[1])
+            self.check_states.append(i[2])
+        self.num_rows = len(self.tasks)+1
         for x in range(self.num_rows):
             self.on.append(tk.IntVar())
             checkbox = tk.Checkbutton(self.window, variable = self.on[x], command = lambda m = self.on[x], n = x: self.onCheck(m, n))
@@ -17,9 +24,8 @@ class todo:
             button_tick = tk.Button(self.window, text = "✔", command = lambda m = x: self.onTick(m))
             button_cross = tk.Button(self.window, text = "❌", command = lambda m = x: self.onCross(m))
             self.rows.append([checkbox, entry, button_tick, button_cross])
-            self.tasks.append("Enter a task")
             self.check_states.append(0)
-
+        self.tasks.append("Enter a task")
         for i in range(len(self.rows)):
             row = self.rows[i]
             checkbox = row[0]
@@ -29,7 +35,10 @@ class todo:
             button_tick = row[2]
             button_cross = row[3]
             checkbox.grid(row=i, column=0)
-            checkbox.grid_remove()
+            if i == len(self.rows) - 1:
+                checkbox.grid_remove()
+            elif self.check_states[i] == 1:
+                checkbox.select()
             entry.grid(row=i, column=1)
             entry.insert(0, self.tasks[i])
             entry.bind("<FocusIn>", lambda event, m = i: self.rem_text_temp(event, m))
@@ -37,7 +46,8 @@ class todo:
             button_tick.grid(row=i, column=2)
             button_cross.grid(row=i, column=3)
             button_cross.grid(row=i, column=3)
-            button_cross.grid_remove()
+            if i == len(self.rows) - 1:
+                button_cross.grid_remove()
 
         self.window.mainloop()
     
@@ -91,10 +101,12 @@ class todo:
             button_tick.grid(row=i, column=2)
             button_cross.grid(row=i, column=3)
             button_cross.grid_remove()
+        self.db.push_tasks(self.username, self.tasks, self.check_states)
     
     def onCross(self, index):
         checkbox = self.rows[index][0]
         entry = self.rows[index][1]
+        self.db.del_task(self.username, self.tasks[index])
         checkbox.destroy()
         entry.destroy()
         self.rows[index][2].destroy()
@@ -140,6 +152,7 @@ class todo:
         entry = row[1]
         var = var.get()
         if var == 1:
+            self.check_states[index] = 1
             contents = entry.get()
             loc = entry.grid_info()
             entry.destroy()
@@ -150,6 +163,7 @@ class todo:
             self.tasks[index] = contents
             label.grid(row=loc["row"], column=loc["column"])
         else:
+            self.check_states[index] = 0
             contents = entry["text"]
             loc = entry.grid_info()
             entry.destroy()
@@ -160,3 +174,4 @@ class todo:
             self.tasks[index] = contents
             entry.grid(row=loc["row"], column=loc["column"])
             entry.insert(0, contents)
+        self.db.push_tasks(self.username, self.tasks, self.check_states)
