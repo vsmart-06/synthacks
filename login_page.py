@@ -1,31 +1,26 @@
 import tkinter as tk
-import pymongo
-import os
-import dotenv
+import sqlite3
 
-dotenv.load_dotenv()
-
-LINK = os.getenv("MONGO_LINK")
-
-class mongo:
-    def __init__(self, link: str):
-        self.client = pymongo.MongoClient(link)
-        self.db = self.client.vdv_hacks
-        self.user_credentials = self.db.user_credentials
-        self.user_tasks = self.db.user_tasks
+class database:
+    def __init__(self):
+        self.db = sqlite3.connect("synthacks/vdv_hacks.db")
+        self.cursor = self.db.cursor()
+        self.cursor.execute("CREATE TABLE IF NOT EXISTS user_credentials (username TEXT PRIMARY KEY, password TEXT)")
+        self.cursor.execute("CREATE TABLE IF NOT EXISTS user_tasks (id INTEGER PRIMARY KEY, username TEXT, password TEXT, done INTEGER, date TEXT)")
     
     def new_user(self, username, password):
-        self.user_credentials.insert_one({"username": username, "password": password})
+        self.cursor.execute(f"INSERT INTO user_credentials VALUES ('{username}', '{password}')")
     
     def is_user(self, username, password):
-        result1 = self.user_credentials.find_one({"username": username, "password": password})
-        result2 = self.user_credentials.find_one({"username": username})
-        if result1 is None or result2 is None:
+        result1 = self.cursor.execute(f"SELECT * FROM user_credentials WHERE username = '{username}' AND password = '{password}'").fetchone()
+        result2 = self.cursor.execute(f"SELECT * FROM user_credentials WHERE username = '{username}'").fetchone()
+        if result1 == None or result2 == None:
             return False
         return True
+        
 
-db = mongo(LINK)
-    
+db = database()
+
 class login:
     def __init__(self, db):
         self.db = db
@@ -48,21 +43,29 @@ class login:
     def login(self):
         username = self.username_entry.get()
         password = self.password_entry.get()
+        try:
+            self.result.destroy()
+        except AttributeError:
+            pass
         if self.db.is_user(username, password):
-            result = tk.Label(self.window, text = "Success!", fg = "green")
+            self.result = tk.Label(self.window, text = "Success!", fg = "green")
         else:
-            result = tk.Label(self.window, text = "Username of passowrd is invalid", fg = "red")
-        result.grid(row = 4, column = 0)
+            self.result = tk.Label(self.window, text = "Username or password is invalid", fg = "red")
+        self.result.grid(row = 4, column = 0)
 
 
     def signup(self):
         username = self.username_entry.get()
         password = self.password_entry.get()
+        try:
+            self.result.destroy()
+        except AttributeError:
+            pass
         if self.db.is_user(username, password):
-            result = tk.Label(self.window, text = "There is already an account with this username", fg = "red")
+            self.result = tk.Label(self.window, text = "There is already an account with this username", fg = "red")
         else:
             self.db.new_user(username, password)
-            result = tk.Label(self.window, text = "Account created", fg = "green")
-        result.grid(row = 4, column = 0)
+            self.result = tk.Label(self.window, text = "Account created", fg = "green")
+        self.result.grid(row = 4, column = 0)
 
 object = login(db)
