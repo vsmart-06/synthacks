@@ -1,5 +1,4 @@
 import tkinter as tk
-import sqlite3
 
 
 class todo:
