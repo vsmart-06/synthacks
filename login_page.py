@@ -76,12 +76,13 @@ class login:
             pass
         if self.db.is_user(username, password):
             self.result = tk.Label(self.window, text = "Success!", fg = "green")
+            self.result.grid(row = 4, column = 0)
             self.window.destroy()
             todo(username, self.db)
             self.db.del_task(username, "Enter a task")
         else:
             self.result = tk.Label(self.window, text = "Username or password is invalid", fg = "red")
-        self.result.grid(row = 4, column = 0)
+            self.result.grid(row = 4, column = 0)
 
 
     def signup(self):

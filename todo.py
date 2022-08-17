@@ -24,21 +24,15 @@ class todo:
             button_tick = tk.Button(self.window, text = "✔", command = lambda m = x: self.onTick(m))
             button_cross = tk.Button(self.window, text = "❌", command = lambda m = x: self.onCross(m))
             self.rows.append([checkbox, entry, button_tick, button_cross])
-            self.check_states.append(0)
         self.tasks.append("Enter a task")
+        self.check_states.append(0)
         for i in range(len(self.rows)):
             row = self.rows[i]
             checkbox = row[0]
-            if self.check_states[i] == 1:
-                checkbox.select()
             entry = row[1]
             button_tick = row[2]
             button_cross = row[3]
             checkbox.grid(row=i, column=0)
-            if i == len(self.rows) - 1:
-                checkbox.grid_remove()
-            elif self.check_states[i] == 1:
-                checkbox.select()
             entry.grid(row=i, column=1)
             entry.insert(0, self.tasks[i])
             entry.bind("<FocusIn>", lambda event, m = i: self.rem_text_temp(event, m))
@@ -48,6 +42,12 @@ class todo:
             button_cross.grid(row=i, column=3)
             if i == len(self.rows) - 1:
                 button_cross.grid_remove()
+            if i == len(self.rows) - 1:
+                checkbox.grid_remove()
+            else:
+                self.onCheck(t[i][2], i)
+                if self.check_states[i] == 1:
+                    checkbox.select()
 
         self.window.mainloop()
     
@@ -147,10 +147,13 @@ class todo:
             entry.bind("<FocusOut>", lambda event, m = i: self.insert_text_temp(event, m))
             button_tick.grid(row=i, column=2)
     
-    def onCheck(self, var, index):
+    def onCheck(self, t, index):
         row = self.rows[index]
         entry = row[1]
-        var = var.get()
+        try:
+            var = t.get()
+        except AttributeError:
+            var = t
         if var == 1:
             self.check_states[index] = 1
             contents = entry.get()
@@ -163,15 +166,16 @@ class todo:
             self.tasks[index] = contents
             label.grid(row=loc["row"], column=loc["column"])
         else:
-            self.check_states[index] = 0
-            contents = entry["text"]
-            loc = entry.grid_info()
-            entry.destroy()
-            entry = tk.Entry(self.window)
-            row[1] = entry
-            row[2].grid()
-            self.rows[index] = row
-            self.tasks[index] = contents
-            entry.grid(row=loc["row"], column=loc["column"])
-            entry.insert(0, contents)
+            if type(t) != int:
+                self.check_states[index] = 0
+                contents = entry["text"]
+                loc = entry.grid_info()
+                entry.destroy()
+                entry = tk.Entry(self.window)
+                row[1] = entry
+                row[2].grid()
+                self.rows[index] = row
+                self.tasks[index] = contents
+                entry.grid(row=loc["row"], column=loc["column"])
+                entry.insert(0, contents)
         self.db.push_tasks(self.username, self.tasks, self.check_states)
