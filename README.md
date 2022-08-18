@@ -1,6 +1,6 @@
-# Synthacks
+# Daily Optimizer
 
-The repository to store the files for Greenwood High Synthacks 2022
+The repository to store the files for the Greenwood High Synthacks 2022 project - the Daily Optimizer
 
 ## Structure
 2 apps - desktop ~~and mobile~~
